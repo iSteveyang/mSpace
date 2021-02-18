@@ -1,0 +1,7 @@
+Switch Presence_Contact "V-Contact" <loc>  { channel="network:device:10_193_233_14:online" }
+
+//Switch MyItem1 { http=">[ON:POST:http://127.0.0.1:5000/switch_on:ON] >[OFF:POST:http://127.0.0.1:5000/switch_off:OFF]" }
+
+Switch Presence_Camera "V-Camera" <camera>  { http=">[ON:POST:http://127.0.0.1:5000/switch_on:ON] >[OFF:POST:http://127.0.0.1:5000/switch_off:OFF]" }
+Switch Presence_Light "V-Light" <light>  { http=">[ON:POST:http://127.0.0.1:5000/light_on:ON] >[OFF:POST:http://127.0.0.1:5000/light_off:OFF]" }
+Contact Presence_HW_Sensor "红外传感器：[%s]" <siren> {gpio="pin:4 force:yes",expire="0.25s"}

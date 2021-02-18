@@ -1,0 +1,10 @@
+sitemap vhome label="v-home"
+{
+	
+	Switch item=Presence_Camera label="V-Camera"
+	Switch item=Presence_Light label="V-Light"	
+	Default item=Presence_HW_Sensor label="V-HW-Sensor"
+	Webview url="http://192.168.0.115:8090/www/" height=20
+	
+	
+}

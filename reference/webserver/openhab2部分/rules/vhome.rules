@@ -1,0 +1,14 @@
+rule "Presence_Camera ON"
+
+when
+  Item Presence_HW_Sensor changed from OFF to ON
+then
+	Presence_Camera.sendCommand(ON)
+end
+
+rule "Presence_Camera OFF"
+when
+  Item Presence_HW_Sensor changed from ON to OFF
+then
+	Presence_Camera.sendCommand(OFF)
+end
