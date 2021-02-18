@@ -1,0 +1,25 @@
+#ifndef _WENDUSHIDU_H_
+#define _WENDUSHIDU_H_
+
+#include<reg52.h>
+#include<intrins.h>
+//---重定义关键词---//
+#ifndef uchar
+#define uchar unsigned char
+#endif
+
+#ifndef uint 
+#define uint unsigned int
+#endif
+
+
+//--声明全局函数--//
+void DHT11_delay_us(uchar );
+void DHT11_delay_ms(uint );
+void DHT11_start();
+uchar DHT11_rec_byte();
+uint erzhuanshi(uchar );
+long DHT11_receive();
+
+
+#endif

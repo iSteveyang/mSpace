@@ -1,0 +1,125 @@
+#include <reg52.h>
+#include <intrins.h>
+#include "wendushidu.h"	//调用wendushidu传感器头文件
+
+#define uint unsigned int
+#define uchar unsigned char
+
+sbit shuju=P2^0; //用于给树莓派传输数据
+sbit key=P3^2;	 //中断线  用于发送数据的标识 
+sbit jiance=P3^1;	//与树莓派通讯时接受树莓派的信号
+sbit q2=P2^6;     //与MQ-2烟雾传感器相连
+long wendu,shidu,yanwu;	//定义温度 湿度
+
+
+void delay10ms(void)   //误差 0us  延时10ms
+{
+    unsigned char a,b,c;
+    for(c=1;c>0;c--)
+        for(b=38;b>0;b--)
+            for(a=130;a>0;a--);
+}
+
+/*函数功能：外部中断0的初始化*/
+void Int0Init()	  
+{
+  EA=0;			 //关闭总中断
+  IT0=1;
+  EX0=1;
+  EA=1;			 //打开总中断
+}
+/*-----------------------------------*/
+
+
+void delay(uint i)	  //延时程序，大约延时i微妙
+{
+	while(i--);	
+}
+
+/*此函数功能：接收一个十进制的数字，返回4位二进制数字*/
+void fanhuanzhi(int shuzi)	
+{
+   int shuzi1,shuzi2,shuzi3,shuzi4;  //定义发送的4个二进制数字
+   shuzi1=shuzi/8;					 //转换十进制为4个二进制数字
+   shuzi2=shuzi%8/4;
+   shuzi3=shuzi%4/2;
+   shuzi4=shuzi%2;
+   while(!jiance);					 //等待树莓派发送高电平
+   while(jiance)  					 //在树莓派高电平时处理数据
+   {
+	   shuju=shuzi1;
+	   while(jiance);				 //等待树莓派变为低电平后结束第一位二进制的计算
+   	 
+   }
+   while(!jiance);
+   while(jiance)  
+   {
+	   shuju=shuzi2;
+	   while(jiance);
+   	 
+   }
+   while(!jiance);
+   while(jiance)  
+   {
+	   shuju=shuzi3;
+	   while(jiance);
+   	 
+   }
+   while(!jiance);
+   while(jiance)  
+   {
+	   shuju=shuzi4;
+	   while(jiance);
+   	 
+   }
+}
+/*----------------------------------------------------*/
+
+
+/*此函数功能：发送给树莓派28位二进制数据，前12位为湿度，中间12位为温度，最后四位为烟雾检测*/
+void Int0() interrupt 0					  
+{
+   delay(1000);		 //延时消抖
+   if(key==0)		 //再次判断是否触发中断
+   {
+  
+   int  test1,test2,test3,test4,test5,test6,test7;   //分别定义为湿度的十位，个位，十分位，温度的十位，个位，十分位，烟雾检测位
+   test1=shidu/100;		   //湿度的十位
+   test2=shidu%100/10;	   //湿度的个位
+   test3=shidu%10;		   //湿度的十分位
+   test4=wendu/100;
+   test5=wendu%100/10;
+   test6=wendu%10;
+    if(q2==0)			   //用于判断烟雾是否达到设定值
+   {
+      test7=0;
+   }
+   if(q2==1)
+   {
+      test7=1;
+   }
+   fanhuanzhi(test1);		//传送数据	前三个为湿度  中间三个为温度 最后一个为烟雾标志值
+   fanhuanzhi(test2);
+   fanhuanzhi(test3);
+   fanhuanzhi(test4);
+   fanhuanzhi(test5);
+   fanhuanzhi(test6);
+   fanhuanzhi(test7);  
+   }
+  
+}
+
+
+void main()	   //主函数
+{ 
+  long zjsj;   //传递中间量
+  Int0Init();  //初始化外部中断0
+  
+  while(1)
+  {
+     zjsj=DHT11_receive();	   //读取传感器数据，湿度以及温度
+	 shidu=zjsj/1000;		   //计算湿度
+	 wendu=zjsj%1000;		   //计算温度
+  }
+}
+

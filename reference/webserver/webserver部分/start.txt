@@ -1,0 +1,24 @@
++++ readlink -f /home/pi/RPi_Cam_Web_Interface/start.sh
+++ dirname /home/pi/RPi_Cam_Web_Interface/start.sh
++ cd /home/pi/RPi_Cam_Web_Interface
++ source ./config.txt
+++ rpicamdir=www
+++ webserver=apache
+++ webport=8090
+++ user=openhab
+++ webpasswd=raspberry
+++ autostart=no
+++ jpglink=no
+++ phpversion=7
++ fn_stop
++ sudo killall raspimjpeg
++ sudo killall php
++ sudo killall motion
++ sudo mkdir -p /dev/shm/mjpeg
++ sudo chown www-data:www-data /dev/shm/mjpeg
++ sudo chmod 777 /dev/shm/mjpeg
++ sleep 1
++ sudo su -c 'raspimjpeg > /dev/null &' www-data
++ '[' -e /etc/debian_version ']'
++ sleep 1
++ sudo su -c 'php /var/www/www/schedule.php > /dev/null &' www-data
